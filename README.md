@@ -2,11 +2,9 @@
 
 **Decentralized Escrow Platform for Freelance Payments on Algorand**
 
-AlgoEase is a trustless escrow platform that enables secure payments between clients and freelancers using Algorand smart contracts. No middlemen, low fees (~0.001 ALGO), and instant settlement.
+## 📄 Overview
 
-## Overview
-
-AlgoEase solves the trust problem in freelance work by locking funds in a smart contract escrow until work is completed and approved. The contract automatically releases payments or refunds based on predefined conditions.
+AlgoEase is a trustless escrow platform that enables secure payments between clients and freelancers using Algorand smart contracts. The platform solves the trust problem in freelance work by locking funds in a smart contract escrow until work is completed and approved. The contract automatically releases payments or refunds based on predefined conditions, eliminating the need for middlemen while ensuring fast transactions (~4.5 second finality) and low fees (~0.001 ALGO per transaction).
 
 ### Key Features
 
@@ -16,7 +14,7 @@ AlgoEase solves the trust problem in freelance work by locking funds in a smart 
 - **Secure**: Code-enforced rules, no human interference
 - **User-Friendly**: Web interface with wallet integration
 
-## How It Works
+### How It Works
 
 1. **Create Bounty**: Client posts a task and deposits payment to escrow
 2. **Accept Task**: Freelancer accepts and commits to complete the work
@@ -25,7 +23,9 @@ AlgoEase solves the trust problem in freelance work by locking funds in a smart 
 
 If work isn't approved, the client can request a refund that returns funds from escrow.
 
-## Prerequisites
+## ⚙️ Setup & Installation
+
+### Prerequisites
 
 - Node.js 20+ and npm 9+
 - Python 3.12+ and pip
@@ -34,26 +34,23 @@ If work isn't approved, the client can request a refund that returns funds from 
 - Supabase account (for backend database)
 - Algorand wallet (Pera Wallet recommended) and TestNet ALGO for contract actions
 
-## Getting Started
+### Getting Started
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ZincChloride-cyber/AlgoEase.git
 cd AlgoEase
 ```
 
-### 2. Install Dependencies
+#### 2. Install Dependencies
 
 ```bash
 # Install all dependencies (root, frontend, backend, contracts)
 npm run install:all
-
-# Or use AlgoKit to bootstrap
-algokit project bootstrap all
 ```
 
-### 3. Configure Environment Variables
+#### 3. Configure Environment Variables
 
 **Backend Configuration**
 
@@ -73,26 +70,17 @@ ALGOD_SERVER=https://testnet-api.algonode.cloud
 ALGOD_TOKEN=
 
 # Contract Configuration
-CONTRACT_APP_ID=your_contract_app_id
+CONTRACT_APP_ID=749707697
 CONTRACT_CREATOR_ADDRESS=your_creator_address
 ```
 
 **Frontend Configuration**
 
-Copy `.env.example` to `frontend/.env` (if it exists) or create one in `projects/algoease-frontend/.env`:
-
-For LocalNet:
-```env
-REACT_APP_CONTRACT_APP_ID=<your_deployed_app_id>
-REACT_APP_CONTRACT_ADDRESS=<your_contract_address>
-REACT_APP_ALGOD_URL=http://localhost:4001
-REACT_APP_INDEXER_URL=http://localhost:8980
-REACT_APP_NETWORK=localnet
-```
+Create `frontend/.env`:
 
 For TestNet:
 ```env
-REACT_APP_CONTRACT_APP_ID=<your_deployed_app_id>
+REACT_APP_CONTRACT_APP_ID=749707697
 REACT_APP_ALGOD_URL=https://testnet-api.algonode.cloud
 REACT_APP_INDEXER_URL=https://testnet-idx.algonode.cloud
 REACT_APP_NETWORK=testnet
@@ -100,201 +88,224 @@ REACT_APP_NETWORK=testnet
 
 **Important**: Never commit `.env` files or share your mnemonic phrase or private keys.
 
-### 4. Set Up Database
+#### 4. Set Up Database
 
-The backend uses Supabase for data persistence. You need to:
+The backend uses Supabase for data persistence:
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
 2. Run the database migrations located in `backend/migrations/`
 3. Set up Row Level Security (RLS) policies as needed
 
-See `backend/migrations/README.md` for detailed migration instructions.
+## 🚀 Running the Application
 
-### 5. Start LocalNet (Optional for Local Development)
+### Running the Frontend
 
+The frontend is a React application that provides the user interface for interacting with the AlgoEase platform.
+
+**Option 1: Using npm script (from root directory)**
 ```bash
-# Start Algorand LocalNet
-npm run localnet:start
-# or
-algokit localnet start
-
-# Verify LocalNet is running
-npm run localnet:status
-# or
-algokit localnet status
-
-# Open Lora Explorer
-npm run localnet:explorer
-# or
-algokit localnet explorer
+npm run dev:frontend
 ```
 
-### 6. Deploy Smart Contracts
-
-**For LocalNet:**
+**Option 2: Directly from frontend directory**
 ```bash
-cd projects/algoease-contracts
-algokit project deploy localnet
-
-# Or from root
-npm run deploy:localnet
-```
-
-**For TestNet:**
-```bash
-cd projects/algoease-contracts
-algokit project deploy testnet
-
-# Or from root
-npm run deploy:testnet
-```
-
-Save the returned App ID in your frontend `.env` file.
-
-### 7. Start the Application
-
-**Start both frontend and backend:**
-```bash
+cd frontend
+npm install
+npm start
+# or
 npm run dev
 ```
 
-This runs:
-- Frontend: http://localhost:3000
-- Backend: http://localhost:5000
+The frontend will start on **http://localhost:3000**
 
-**Or run separately:**
+**Requirements:**
+- Ensure `frontend/.env` is configured with the correct contract App ID and network settings
+- Make sure the backend is running (for API calls)
+- Have Pera Wallet installed in your browser for wallet connection
+
+### Running the Backend
+
+The backend is an Express.js API server that handles metadata storage and provides REST endpoints.
+
+**Option 1: Using npm script (from root directory)**
 ```bash
-npm run dev:frontend  # Frontend only
-npm run dev:backend   # Backend only
+npm run dev:backend
 ```
 
-## Project Structure
-
-```
-AlgoEase/
-├── projects/                    # Main projects directory
-│   ├── algoease-contracts/      # PyTeal smart contracts
-│   │   ├── algoease_contract.py
-│   │   ├── algoease_v2_contract.py
-│   │   ├── algoease_approval.teal
-│   │   ├── algoease_clear.teal
-│   │   ├── test_contract.py
-│   │   ├── requirements.txt
-│   │   ├── package.json
-│   │   └── .algokit.toml
-│   │
-│   └── algoease-frontend/       # React frontend application
-│       ├── src/
-│       │   ├── components/
-│       │   ├── contexts/
-│       │   ├── pages/
-│       │   ├── utils/
-│       │   └── config/
-│       ├── public/
-│       ├── tailwind.config.js
-│       ├── package.json
-│       └── .env.example
-│
-├── backend/                     # Node.js API server
-│   ├── routes/                  # API route handlers
-│   ├── models/                  # Data models
-│   ├── middleware/              # Express middleware
-│   ├── config/                  # Configuration files
-│   ├── migrations/              # Database migrations
-│   ├── scripts/                 # Utility scripts
-│   └── server.js                # Main server file
-│
-├── contracts/                   # Legacy contract sources
-├── scripts/                     # Deployment and testing scripts
-├── .algokit.toml                # Root AlgoKit configuration
-├── algokit.toml                 # Legacy Algokit config
-├── package.json                 # Root package.json with scripts
-└── README.md                    # This file
+**Option 2: Directly from backend directory**
+```bash
+cd backend
+npm install
+npm run dev
+# or for production
+npm start
 ```
 
-## Smart Contract
+The backend will start on **http://localhost:5000**
 
-The smart contract manages the escrow and enforces payment rules. It stores:
+**Requirements:**
+- Ensure `backend/.env` is configured with Supabase credentials
+- Database migrations should be run in Supabase
+- Make sure Supabase project is active and accessible
 
-- **Status**: Current state (OPEN, ACCEPTED, APPROVED, CLAIMED, REFUNDED)
-- **Client Address**: Who created the bounty
-- **Freelancer Address**: Who accepted it
-- **Amount**: ALGO locked in escrow
-- **Deadline**: When bounty expires
-- **Task Description**: Work requirements
-- **Verifier Address**: Who can approve work
-
-### Status Codes
-
-- `0` - **OPEN**: Bounty available, waiting for freelancer
-- `1` - **ACCEPTED**: Freelancer committed, work in progress
-- `2` - **APPROVED**: Work verified, ready to claim
-- `3` - **CLAIMED**: Payment released to freelancer
-- `4` - **REFUNDED**: Funds returned to client
-
-## API Endpoints
-
-**Backend API:**
-
+**Backend API Endpoints:**
 - `GET /api/bounties` - List all bounties
 - `POST /api/bounties` - Create new bounty (metadata)
 - `GET /api/bounties/:id` - Get bounty details
 - `GET /api/contracts/info` - Get contract information
 - `GET /health` - Health check
 
-**Note**: Money transactions happen on-chain via smart contract, not through the API. The API only handles metadata storage.
+### Running Both Together
 
-## Testing
+To run both frontend and backend concurrently:
 
-**Test complete bounty lifecycle:**
 ```bash
-python complete-lifecycle-test.py
+npm run dev
 ```
 
-This script will:
-- Create a new bounty (locks 3 ALGO in escrow)
-- Accept the bounty
-- Approve the work
-- Claim payment from escrow
+This will start:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:5000
 
-**Other test scripts:**
-- `check-bounty-state.py` - Check current bounty status
-- `simple-bounty-test.py` - Basic functionality test
-- `bounty-wizard.py` - Interactive CLI tool
+## 📦 Deploying AlgoEase Bounty Escrow V2 Contract
 
-## Available Scripts
+The AlgoEase Bounty Escrow V2 contract is a PyTeal smart contract that manages escrow functionality using box storage for multiple concurrent bounties.
 
-- `npm run dev` - Start frontend and backend concurrently
-- `npm run dev:frontend` - Start frontend only
-- `npm run dev:backend` - Start backend only
-- `npm run install:all` - Install all dependencies (root, frontend, backend, contracts)
-- `npm run build` - Build frontend for production
-- `npm run localnet:start` - Start Algorand LocalNet
-- `npm run localnet:stop` - Stop Algorand LocalNet
-- `npm run localnet:status` - Check LocalNet status
-- `npm run localnet:explorer` - Open Lora Explorer
-- `npm run deploy:localnet` - Deploy contracts to LocalNet
-- `npm run deploy:testnet` - Deploy contracts to TestNet
+### Prerequisites for Deployment
 
-## Deployment
+- Python 3.12+ installed
+- Algorand TestNet account with sufficient ALGO (at least 0.5 ALGO for deployment)
+- Creator mnemonic phrase (keep this secure!)
 
-**Deploy to TestNet:**
-```bash
-cd projects/algoease-contracts
-algokit project deploy testnet
+### Deployment Steps
+
+#### 1. Prepare Contract Files
+
+The contract consists of:
+- `contracts/algoease_bounty_escrow_v2.py` - PyTeal source code
+- `contracts/algoease_bounty_escrow_v2_approval.teal` - Compiled approval program
+- `contracts/algoease_bounty_escrow_v2_clear.teal` - Compiled clear program
+
+#### 2. Configure Deployment Script
+
+Edit `deploy_bounty_escrow_v2.py` and update the following:
+
+```python
+# Configuration
+ALGOD_ADDRESS = "https://testnet-api.algonode.cloud"  # TestNet endpoint
+ALGOD_TOKEN = ""  # Empty for public endpoints
+
+# Your creator mnemonic (NEVER commit this!)
+CREATOR_MNEMONIC = "your mnemonic phrase here"
 ```
 
-This will compile the PyTeal contract and deploy it to Algorand TestNet. Save the returned App ID in your frontend `.env` file.
+**⚠️ Security Warning:** Never commit your mnemonic phrase to version control. Consider using environment variables instead.
 
-**Deploy to MainNet:**
+#### 3. Deploy to TestNet
+
+Run the deployment script:
+
 ```bash
-cd projects/algoease-contracts
-algokit project deploy mainnet
+python deploy_bounty_escrow_v2.py
 ```
 
-**Warning**: Always test thoroughly on TestNet before deploying to MainNet. Smart contracts are immutable once deployed.
+The script will:
+1. ✅ Check creator account balance
+2. ✅ Compile TEAL programs
+3. ✅ Create the application transaction
+4. ✅ Sign and submit to TestNet
+5. ✅ Wait for confirmation
+6. ✅ Display App ID and Contract Address
+7. ✅ Update `contract.env`, `frontend/.env`, and `backend/.env` files
 
-## Architecture
+#### 4. Verify Deployment
+
+After deployment, you'll receive:
+- **App ID**: The application ID (e.g., `749707697`)
+- **Contract Address**: The escrow address (e.g., `ZS2EW3YGUDATK5OH4S7QUPMIJ4T6ROU6OFJEAGKFD2RSEHPSOCJ3BZBFLU`)
+
+Verify on Lora Explorer:
+```
+https://lora.algokit.io/testnet/application/{APP_ID}
+```
+
+#### 5. Update Configuration Files
+
+The deployment script automatically updates:
+- `contract.env` - Contract configuration
+- `frontend/.env` - Frontend environment variables
+- `backend/.env` - Backend environment variables
+
+**Manual Update (if needed):**
+
+Update `frontend/.env`:
+```env
+REACT_APP_CONTRACT_APP_ID={APP_ID}
+REACT_APP_CONTRACT_ADDRESS={CONTRACT_ADDRESS}
+REACT_APP_ALGOD_URL=https://testnet-api.algonode.cloud
+REACT_APP_INDEXER_URL=https://testnet-idx.algonode.cloud
+REACT_APP_NETWORK=testnet
+```
+
+Update `backend/.env`:
+```env
+CONTRACT_APP_ID={APP_ID}
+CONTRACT_ADDRESS={CONTRACT_ADDRESS}
+```
+
+#### 6. Restart Services
+
+After deployment, restart your frontend and backend:
+
+```bash
+# Stop existing processes (Ctrl+C)
+# Then restart
+npm run dev
+```
+
+### Contract Features
+
+The Bounty Escrow V2 contract supports:
+
+- **Multiple Concurrent Bounties**: Uses box storage to support unlimited bounties
+- **Status Management**: Tracks bounty status (OPEN, ACCEPTED, SUBMITTED, APPROVED, REJECTED)
+- **Automatic Fund Transfer**: Funds automatically transfer on approve/reject
+- **Box Storage**: Each bounty stored in a separate box for scalability
+
+### Contract Methods
+
+- `create_bounty(amount, task_desc)` - Create a new bounty and lock funds
+- `accept_bounty(bounty_id)` - Freelancer accepts a bounty
+- `submit_bounty(bounty_id)` - Freelancer submits completed work
+- `approve_bounty(bounty_id)` - Creator approves work, funds transfer to freelancer
+- `reject_bounty(bounty_id)` - Creator rejects work, funds refund to creator
+
+### Troubleshooting Deployment
+
+**Insufficient Balance:**
+- Get TestNet ALGO from [Algorand Dispenser](https://bank.testnet.algorand.network/)
+- Need at least 0.5 ALGO for deployment
+
+**Compilation Errors:**
+- Ensure TEAL files are present in `contracts/` directory
+- Check Python and algosdk versions
+
+**Transaction Failed:**
+- Verify network connectivity
+- Check account balance
+- Ensure mnemonic is correct
+
+## 🔗 Deployed Smart Contracts (TestNet)
+
+The AlgoEase smart contract is deployed on Algorand TestNet:
+
+- **Contract Application**: [View on Lora Explorer](https://lora.algokit.io/testnet/application/749707697)
+- **App ID**: `749707697`
+- **Contract Address**: `ZS2EW3YGUDATK5OH4S7QUPMIJ4T6ROU6OFJEAGKFD2RSEHPSOCJ3BZBFLU`
+
+## 🧠 Architecture & Components
+
+AlgoEase consists of four main components working together to provide a secure, decentralized escrow platform:
 
 ```
 ┌─────────────┐         ┌─────────────┐         ┌──────────────┐
@@ -311,59 +322,27 @@ algokit project deploy mainnet
 └──────────────────────────────────────┘
 ```
 
-- **Frontend**: User interface, wallet connection, displays bounties
-- **Backend**: Stores bounty metadata (descriptions, images), provides API
-- **Smart Contract**: Holds escrowed funds, enforces payment rules
-- **Supabase**: Stores off-chain metadata (too expensive for blockchain)
+### Component Breakdown
 
-## Security Notes
+- **Frontend (React)**: User interface built with React, providing wallet connection via Pera Wallet, bounty browsing, creation, and management. Handles all user interactions and displays real-time bounty status.
 
-- Never commit `.env` files containing mnemonics or private keys
-- Always test on TestNet before MainNet
-- Keep your mnemonic phrase secure - if exposed, consider funds compromised
-- Smart contracts are immutable once deployed - test thoroughly
-- Use Supabase Row Level Security (RLS) policies to protect data
-- Regularly update dependencies to patch security vulnerabilities
+- **Backend (Express.js)**: Node.js API server that stores bounty metadata (descriptions, images, additional details) in Supabase. Provides REST API endpoints for bounty management while keeping financial transactions on-chain.
 
-## Troubleshooting
+- **Smart Contract (PyTeal)**: Algorand Application Smart Contract written in PyTeal that manages escrow functionality. Stores bounty state using box storage to support multiple concurrent bounties. Handles payment escrow, approval workflow, and automated fund distribution.
 
-**Wallet connection issues:**
-- Install Pera Wallet browser extension
-- Refresh the page after installing
-- Check browser console for error messages
+- **Supabase (PostgreSQL)**: Relational database for storing off-chain metadata. Used because storing large amounts of data on-chain is expensive. Implements Row Level Security (RLS) for data protection.
 
-**Insufficient balance:**
-- Get TestNet ALGO from [Algorand Dispenser](https://bank.testnet.algorand.network/)
-- Need ~5-10 ALGO for testing (includes transaction fees)
+### Data Flow
 
-**Supabase connection failed:**
-- Verify `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `backend/.env`
-- Ensure database migrations have been run
-- Check Supabase project status in dashboard
+1. **Bounty Creation**: Client creates bounty via frontend → Frontend calls smart contract to lock funds → Backend stores metadata in Supabase
+2. **Bounty Acceptance**: Freelancer accepts via frontend → Frontend calls smart contract to update state
+3. **Work Submission**: Freelancer submits work → Backend stores submission details in Supabase
+4. **Approval & Payment**: Client approves → Frontend calls smart contract → Smart contract releases funds to freelancer
+5. **Refund Flow**: Client requests refund → Frontend calls smart contract → Smart contract returns funds to client
 
-**Contract not found:**
-- Verify `REACT_APP_CONTRACT_APP_ID` matches deployed contract
-- Check contract on [AlgoExplorer](https://testnet.algoexplorer.io/)
-- Ensure contract was deployed to the correct network (LocalNet/TestNet/MainNet)
+## 🌐 Deployed Frontend
 
-**Backend won't start:**
-- Check that all environment variables are set correctly
-- Verify Supabase connection
-- Check port 5000 is not already in use
-- Review backend logs for specific error messages
-
-**Frontend build errors:**
-- Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
-- Check Node.js version (requires 20+)
-- Verify all environment variables are set
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+The frontend is configured for deployment on Vercel. Once deployed, the live application URL will be available here.
 
 ## License
 
